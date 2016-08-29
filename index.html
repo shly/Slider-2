@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Slider</title>
+	<style type="text/css">
+	*{
+		margin: 0;
+		padding: 0;
+		text-decoration: none;
+	}
+	body{
+		padding: 20px;
+	}
+	img{
+		width: 300px;
+		height: 200px;
+		border: none;
+	}
+	#container{
+		width: 300px;
+		height: 200px;
+		position: relative;
+		border: 3px solid #000;
+		overflow: hidden;
+	}
+	#list{
+		width: 2100px;
+		height: 200px;
+		position: absolute;
+		z-index: 1;
+		left: -300px;
+	}
+	#list img{
+		float: left;
+	}
+	#buttons{
+		position: absolute;
+		bottom: 10px;
+		left: 100px;
+		height: 10px;
+		width: 100px;
+		z-index: 2;
+	}
+	#buttons span{
+		cursor: pointer;
+		float: left;border: 1px solid #fff;width: 10px;height: 10px;border-radius: 50%;background-color: #333;margin-right: 5px;
+	}
+	.arrow{
+		cursor: pointer;
+		display: none; 
+		line-height: 39px;
+		text-align: center;
+		font-size: 36px;
+		font-weight: bold;
+		z-index: 2;
+		position: absolute;
+		color: #fff;background-color: rgba(0,0,0,.3);
+		top:80px;
+	}
+	#prev{
+		left:10px;
+	}
+	#next{
+		right: 10px;
+	}
+	.arrow:hover{
+		background-color: rgba(0,0,0,.7);
+	}
+	#container:hover .arrow{
+		display: block;
+	}
+	#buttons .on{
+		background-color: orangered;
+	}
+
+	</style>
+	<script type="text/javascript">
+		window.onload=function(){
+			var container = document.getElementById("container");
+			var list = document.getElementById('list');
+			var buttons = document.getElementById('buttons').getElementsByTagName('span');
+			var prev = document.getElementById('prev');
+			var next = document.getElementById('next');
+            var index = 1;
+            var animated = false;
+
+            function showButton(){
+            	for (var i = 0; i<buttons.length; i++) {
+            		if(buttons[i].className=='on'){
+            			buttons[i].className = '';
+            			break;
+            		}
+            	}
+            	buttons[index-1].className = 'on';
+
+            }
+
+            function animate(offset){
+            	animated = true;
+            	var newleft = parseInt(list.style.left) + offset ;
+            	var time = 300;//位移总时间
+            	var interval = 10;//位移间隔
+            	var speed = offset/(time/interval);//每次位移量
+
+
+            	function go(){
+            		if ((speed<0&&parseInt(list.style.left) > newleft)||(speed>0&&parseInt(list.style.left) < newleft)) {
+            			list.style.left = parseInt(list.style.left)+speed+"px";
+            			setTimeout(go,interval);
+
+            		}else{
+            			animated = false;
+		            	list.style.left  =newleft + 'px';
+		            	if(newleft >-300){
+		            		list.style.left = - 1500 +'px';
+		            	}
+		            	if(newleft < -1500){
+		            		list.style.left = - 300 +'px';
+		            	}
+
+            		}
+            	}
+            	go();
+            }
+            next.onclick = function(){
+            	if(index == 5){
+            		index = 1;
+            	}else{
+            		index +=1;
+            	}
+            	
+            	showButton();
+            	if(!animated){
+            		animate(-300);
+            	}
+            	
+            } 
+            prev.onclick = function(){
+            	if(index == 1){
+            		index = 5;
+            	}else{
+            		index -=1;
+            	}
+            	showButton(index);
+            	if(!animated){
+            		animate(300);
+            	}
+            }
+
+           for(var j = 0;j<buttons.length;j++){
+	           	buttons[j].onclick  = function(){
+	           		if(this.className=='on'){
+	           			return;
+	           		}
+           			var myIndex = parseInt(this.getAttribute("index"));
+           			var offset = -300*(myIndex-index);
+           			index = myIndex;
+           			showButton(myIndex);
+           			if(!animated){
+	            		animate(offset);
+	            	}
+           		
+           			
+           		}
+           		
+           }
+
+           //自动切换
+           function play(){
+           	timer = setInterval(function(){
+           		next.click();
+           	},2000);
+           }
+           function stop(){
+           		clearInterval(timer);
+           }
+           play();
+           container.onmouseover = stop;
+           container.onmouseout = play;
+
+		}
+	</script>
+</head>
+<body>
+	<div id="container">
+		<div id="list" style="left: -300px">
+			<img src="images/5.jpg" alt="5">
+			<img src="images/1.jpg" alt="1">
+			<img src="images/2.jpg" alt="2">
+			<img src="images/3.jpg" alt="3">
+			<img src="images/4.jpg" alt="4">
+			<img src="images/5.jpg" alt="5">
+			<img src="images/1.jpg" alt="1"></div>
+		<div id="buttons">
+			<span index='1' class="on"></span>
+			<span index='2'></span>
+			<span index='3'></span>
+			<span index='4'></span>
+			<span index='5'></span>
+		</div>
+		<a href="javascript:;" class="arrow" id = "prev">&lt;</a>
+		<a href="javascript:;" class="arrow" id = "next">&gt;</a>
+	</div>
+
+</body>
+</html>
